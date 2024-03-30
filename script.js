@@ -29,10 +29,10 @@ function addOrUpdateEntry() {
     } else alert("Por favor, preencha todos os campos.");
 }
 
-function renderEntries() {
+function renderEntries(filteredEntries = entries) {
     const entriesContainer = document.getElementById("entries-container");
     entriesContainer.innerHTML = "";
-    entries.forEach((entry, index) => {
+    filteredEntries.forEach((entry, index) => {
         const entryElement = document.createElement("div");
         entryElement.className = "entry";
         entryElement.innerHTML = `<p><strong>Cliente:</strong> ${entry.clientName}</p>
