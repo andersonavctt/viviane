@@ -73,4 +73,6 @@ function searchEntries() {
     renderEntries(filteredEntries);
 }
 
+document.getElementById("search").addEventListener("input", searchEntries);
+
 loadEntriesFromCookies();
