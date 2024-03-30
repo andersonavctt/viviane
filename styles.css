@@ -1,0 +1,145 @@
+/* Estilos para o cabeçalho */
+header {
+    background-color: #ff69b4; /* Rosa */
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 2px solid #ff1493; /* Rosa mais escuro */
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+}
+
+.logo-container img {
+    width: 70px; /* Tamanho maior da imagem do logo */
+    margin-right: 10px;
+}
+
+.logo-container h1 {
+    color: #fff;
+    font-size: 24px;
+    margin: 0;
+}
+
+/* Estilos para a barra de pesquisa */
+#search-container {
+    display: flex;
+    align-items: center;
+}
+
+#search {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 200px; /* Largura ajustada */
+    max-width: 100%;
+    box-sizing: border-box;
+    transition: border-color 0.3s;
+}
+
+/* Outros estilos */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+    background-color: #f9f9f9; /* Fundo suave */
+}
+
+h1 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+#form-container {
+    background-color: #fff;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+input[type="text"],
+input[type="date"],
+input[type="number"],
+button {
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid #ddd; /* Cinza suave */
+    border-radius: 4px;
+    width: calc(50% - 5px); /* 50% do container com 5px de margem entre os elementos */
+    box-sizing: border-box;
+}
+
+input[type="text"]:focus,
+input[type="date"]:focus,
+input[type="number"]:focus {
+    outline: none;
+    border-color: #ff69b4; /* Rosa */
+    box-shadow: 0 0 5px rgba(255, 105, 180, 0.5); /* Sombra rosa */
+}
+
+button {
+    background-color: #ff69b4; /* Rosa */
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    width: calc(50% - 5px); /* 50% do container com 5px de margem entre os elementos */
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #ff1493; /* Rosa mais escuro */
+}
+
+#entries-container {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.entry {
+    border-bottom: 1px solid #ddd; /* Cinza suave */
+    padding: 15px 0;
+}
+
+.entry:last-child {
+    border-bottom: none;
+}
+
+.entry p {
+    margin: 5px 0;
+}
+
+.button-group {
+    display: flex;
+}
+
+.edit-button,
+.delete-button {
+    padding: 8px 16px;
+    border: none;
+    cursor: pointer;
+    width: auto;
+    transition: background-color 0.3s;
+}
+
+.edit-button {
+    background-color: #ff8c00; /* Laranja */
+    color: #fff;
+    margin-right: 5px;
+}
+
+.delete-button {
+    background-color: #dc143c; /* Vermelho escuro */
+    color: #fff;
+}
+
+.edit-button:hover,
+.delete-button:hover {
+    opacity: 0.8;
+}
