@@ -14,7 +14,7 @@ function login(event) {
         localStorage.setItem('loggedIn', true);
         window.location.href = 'agenda.html';
     } else {
-        alert('E-mail ou senha incorretos. Por favor, tente novamente.');
+        alert('Email ou senha incorretos. Tente novamente.');
     }
 }
 
