@@ -89,7 +89,13 @@ function excluirCliente(index) {
 function carregarClientesDeCookies() {
     const cookieData = document.cookie.split('; ').find(row => row.startsWith('agenda_entries='));
     if (cookieData) {
-        const clientesRegistrados = JSON.parse(cookieData.split('=')[1]) || [];
+        const rawClientesRegistrados = cookieData.split('=')[1];
+        const clientesRegistrados = JSON.parse(rawClientesRegistrados).map(entry => ({
+            'client-name': entry.clientName,
+            'procedure': entry.procedure,
+            'date': entry.date,
+            'amount': entry.amount
+        }));
         atualizarClientesRegistrados(clientesRegistrados);
     }
 }
