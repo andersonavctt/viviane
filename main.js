@@ -19,13 +19,13 @@ function registrarCliente(event) {
 
     if (usuarioLogado) {
         let clientesRegistrados = JSON.parse(localStorage.getItem(usuarioLogado)) || [];
-        const clienteExistente = clientesRegistrados.find(cliente => cliente.nome === nome && cliente.data === data);
+        const clienteExistente = clientesRegistrados.find(cliente => cliente['client-name'] === nome && cliente['date'] === data);
         
         if (clienteExistente) {
-            return
+            return;
         }
         
-        clientesRegistrados.push({ nome, data, valor, procedimento });
+        clientesRegistrados.push({ 'client-name': nome, 'procedure': procedimento, 'date': data, 'amount': valor });
         localStorage.setItem(usuarioLogado, JSON.stringify(clientesRegistrados));
         document.getElementById('nome').value = '';
         document.getElementById('data').value = '';
@@ -45,10 +45,10 @@ function atualizarClientesRegistrados(clientesRegistrados) {
     clientesRegistrados.forEach((cliente, index) => {
         const row = `
             <tr>
-                <td>${cliente.nome}</td>
-                <td>${cliente.data}</td>
-                <td>R$ ${cliente.valor}</td>
-                <td>${cliente.procedimento}</td>
+                <td>${cliente['client-name']}</td>
+                <td>${cliente['date']}</td>
+                <td>R$ ${cliente['amount']}</td>
+                <td>${cliente['procedure']}</td>
                 <td>
                     <button onclick="editarCliente(${index})">Editar</button>
                     <button onclick="excluirCliente(${index})">Excluir</button>
@@ -65,10 +65,10 @@ function editarCliente(index) {
         const clientesRegistrados = JSON.parse(localStorage.getItem(usuarioLogado)) || [];
         const clienteSelecionado = clientesRegistrados[index];
 
-        document.getElementById('nome').value = clienteSelecionado.nome;
-        document.getElementById('data').value = clienteSelecionado.data;
-        document.getElementById('valor').value = clienteSelecionado.valor;
-        document.getElementById('procedimento').value = clienteSelecionado.procedimento;
+        document.getElementById('nome').value = clienteSelecionado['client-name'];
+        document.getElementById('data').value = clienteSelecionado['date'];
+        document.getElementById('valor').value = clienteSelecionado['amount'];
+        document.getElementById('procedimento').value = clienteSelecionado['procedure'];
 
         clientesRegistrados.splice(index, 1);
         localStorage.setItem(usuarioLogado, JSON.stringify(clientesRegistrados));
