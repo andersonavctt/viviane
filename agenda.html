@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Viviane Bispo</title>
+    <link rel="icon" type="image/x-icon" href="/images/logo.png">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <div class="header-left">
+            <img src="images/logo.png" alt="Viviane Bispo" class="logo">
+            <h1>Viviane Bispo</h1>
+        </div>
+        <nav>
+            <a href="dashboard.html" class="dashboard-button">Dashboard</a>
+            <a href="#" class="logout-button">Deslogar</a>
+        </nav>
+    </header>
+        
+    <div class="container">
+        <section id="registro">
+            <h2>Registro de Clientes</h2>
+            <form id="registro-form">
+                <label for="nome">Cliente:</label>
+                <input type="text" id="nome" name="nome" required>
+                <label for="data">Data:</label>
+                <input type="date" id="data" name="data" required>
+                <label for="valor">Custo:</label>
+                <input type="number" id="valor" name="valor" required>
+                <label for="procedimento">Procedimento:</label>
+                <input type="text" id="procedimento" name="procedimento" required>
+                <button type="submit">Registrar</button>
+            </form>
+        </section>
+
+        <section id="clientes-registrados">
+            <h2>Clientes Registrados</h2>
+            <table id="clientes-table">
+                <thead>
+                    <tr>
+                        <th>Cliente</th>
+                        <th>Data</th>
+                        <th>Custo</th>
+                        <th>Procedimento</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Clientes registrados serão adicionados aqui dinamicamente -->
+                </tbody>
+            </table>
+        </section>
+    </div>
+
+    <script src="main.js"></script>
+</body>
+</html>
