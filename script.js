@@ -1,78 +1,102 @@
-let entries = [];
-let editIndex = -1;
+function logout() {
+    localStorage.removeItem('loggedIn');
+    window.location.href = 'index.html';
+}
 
-function loadEntriesFromCookies() {
-    const cookieData = document.cookie.split('; ').find(row => row.startsWith('agenda_entries='));
-    if (cookieData) {
-        const storedEntries = JSON.parse(cookieData.split('=')[1]);
-        if (Array.isArray(storedEntries)) {
-            entries = storedEntries;
-            renderEntries();
-        }
+function formatarDataBrasil(data) {
+    const partesData = data.split('-');
+    return partesData[2] + '/' + partesData[1] + '/' + partesData[0];
+}
+
+function registrarCliente(event) {
+    event.preventDefault();
+    const nome = document.getElementById('nome').value;
+    const data = formatarDataBrasil(document.getElementById('data').value);
+    const valor = document.getElementById('valor').value;
+    const procedimento = document.getElementById('procedimento').value;
+
+    const usuarioLogado = localStorage.getItem('loggedIn');
+
+    if (usuarioLogado) {
+        let clientesRegistrados = JSON.parse(localStorage.getItem(usuarioLogado)) || [];
+        clientesRegistrados.push({ nome, data, valor, procedimento });
+        localStorage.setItem(usuarioLogado, JSON.stringify(clientesRegistrados));
+        document.getElementById('nome').value = '';
+        document.getElementById('data').value = '';
+        document.getElementById('valor').value = '';
+        document.getElementById('procedimento').value = '';
+        atualizarClientesRegistrados(clientesRegistrados);
+    } else {
+        alert('Você precisa estar logado para registrar clientes.');
+        window.location.href = 'login.html';
     }
 }
 
-function saveEntriesToCookies() {
-    const expirationDate = new Date();
-    expirationDate.setFullYear(expirationDate.getFullYear() + 1);
-    document.cookie = `agenda_entries=${JSON.stringify(entries)}; expires=${expirationDate.toUTCString()}; path=/`;
-}
+function atualizarClientesRegistrados(clientesRegistrados) {
+    const clientesTableBody = document.getElementById('clientes-table').getElementsByTagName('tbody')[0];
+    clientesTableBody.innerHTML = '';
 
-function addOrUpdateEntry() {
-    const fields = ["client-name", "procedure", "date", "amount"].map(field => document.getElementById(field).value);
-    if (fields.every(field => field)) {
-        const entry = {clientName: fields[0], procedure: fields[1], date: fields[2], amount: fields[3]};
-        editIndex === -1 ? entries.push(entry) : (entries[editIndex] = entry, editIndex = -1);
-        renderEntries();
-        clearForm();
-        saveEntriesToCookies();
-    } else alert("Por favor, preencha todos os campos.");
-}
-
-function renderEntries(filteredEntries = entries) {
-    const entriesContainer = document.getElementById("entries-container");
-    entriesContainer.innerHTML = "";
-    filteredEntries.forEach((entry, index) => {
-        const entryElement = document.createElement("div");
-        entryElement.className = "entry";
-        entryElement.innerHTML = `<p><strong>Cliente:</strong> ${entry.clientName}</p>
-            <p><strong>Procedimento:</strong> ${entry.procedure}</p>
-            <p><strong>Data:</strong> ${entry.date}</p>
-            <p><strong>Valor Pago:</strong> R$ ${entry.amount}</p>
-            <div class="button-group">
-                <button class="edit-button" onclick="editEntry(${index})">Editar</button>
-                <button class="delete-button" onclick="deleteEntry(${index})">Excluir</button>
-            </div>`;
-        entriesContainer.appendChild(entryElement);
+    clientesRegistrados.forEach((cliente, index) => {
+        const row = `
+            <tr>
+                <td>${cliente.nome}</td>
+                <td>${cliente.data}</td>
+                <td>R$ ${cliente.valor}</td>
+                <td>${cliente.procedimento}</td>
+                <td>
+                    <button onclick="editarCliente(${index})">Editar</button>
+                    <button onclick="excluirCliente(${index})">Excluir</button>
+                </td>
+            </tr>
+        `;
+        clientesTableBody.innerHTML += row;
     });
 }
 
-function clearForm() {
-    ["client-name", "procedure", "date", "amount"].forEach(field => document.getElementById(field).value = "");
-    editIndex = -1;
-    document.getElementById("add-update-button").innerText = "Adicionar";
+function editarCliente(index) {
+    const usuarioLogado = localStorage.getItem('loggedIn');
+    if (usuarioLogado) {
+        const clientesRegistrados = JSON.parse(localStorage.getItem(usuarioLogado)) || [];
+        const clienteSelecionado = clientesRegistrados[index];
+
+        document.getElementById('nome').value = clienteSelecionado.nome;
+        document.getElementById('data').value = clienteSelecionado.data;
+        document.getElementById('valor').value = clienteSelecionado.valor;
+        document.getElementById('procedimento').value = clienteSelecionado.procedimento;
+
+        clientesRegistrados.splice(index, 1);
+        localStorage.setItem(usuarioLogado, JSON.stringify(clientesRegistrados));
+        atualizarClientesRegistrados(clientesRegistrados);
+    }
 }
 
-function editEntry(index) {
-    const entry = entries[index];
-    ["client-name", "procedure", "date", "amount"].forEach((field, i) => document.getElementById(field).value = entry[Object.keys(entry)[i]]);
-    editIndex = index;
-    document.getElementById("add-update-button").innerText = "Atualizar";
-    saveEntriesToCookies();
+function excluirCliente(index) {
+    const usuarioLogado = localStorage.getItem('loggedIn');
+    if (usuarioLogado) {
+        let clientesRegistrados = JSON.parse(localStorage.getItem(usuarioLogado)) || [];
+        clientesRegistrados.splice(index, 1);
+        localStorage.setItem(usuarioLogado, JSON.stringify(clientesRegistrados));
+        atualizarClientesRegistrados(clientesRegistrados);
+    }
 }
 
-function deleteEntry(index) {
-    entries.splice(index, 1);
-    renderEntries();
-    saveEntriesToCookies();
+function carregarClientesDeCookies() {
+    const cookieData = document.cookie.split('; ').find(row => row.startsWith('agenda_entries='));
+    if (cookieData) {
+        const clientesRegistrados = JSON.parse(cookieData.split('=')[1]) || [];
+        atualizarClientesRegistrados(clientesRegistrados);
+    }
 }
 
-function searchEntries() {
-    const searchInput = document.getElementById("search").value.toLowerCase();
-    const filteredEntries = entries.filter(entry => entry.clientName.toLowerCase().includes(searchInput));
-    renderEntries(filteredEntries);
-}
-
-document.getElementById("search").addEventListener("input", searchEntries);
-
-loadEntriesFromCookies();
+document.getElementById('registro-form').addEventListener('submit', registrarCliente);
+document.querySelector('.logout-button').addEventListener('click', logout);
+document.addEventListener('DOMContentLoaded', () => {
+    const usuarioLogado = localStorage.getItem('loggedIn');
+    if (usuarioLogado) {
+        const clientesRegistrados = JSON.parse(localStorage.getItem(usuarioLogado)) || [];
+        atualizarClientesRegistrados(clientesRegistrados);
+    } else {
+        carregarClientesDeCookies()
+        logout()
+    }
+});
