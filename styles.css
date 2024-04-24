@@ -1,3 +1,4 @@
+/* Reset CSS */
 * {
     box-sizing: border-box;
     margin: 0;
@@ -10,10 +11,16 @@ body {
     color: #333;
 }
 
+/* Adiciona viewport meta tag */
+meta[name="viewport"] {
+    content: width=device-width, initial-scale=1;
+}
+
 .container {
     max-width: 800px;
     margin: 0 auto;
     padding: 20px;
+    box-sizing: border-box; /* Adiciona padding ao tamanho total */
 }
 
 header {
@@ -176,28 +183,30 @@ table button:hover {
     background-color: #555;
 }
 
+/* Media Query para telas menores */
 @media (max-width: 600px) {
-    form input[type="text"],
-    form input[type="date"],
-    form input[type="number"],
-    form input[type="email"],
-    form input[type="password"] {
-        width: 100%;
+    header {
+        flex-direction: column;
+        text-align: center;
     }
 
-    form button {
-        width: 100%;
+    .header-left {
+        margin-bottom: 10px;
+    }
+
+    .logo {
+        margin: 0 auto 10px auto; /* Centraliza a logo */
     }
 
     nav {
         float: none;
         text-align: center;
-        margin-top: 10px;
+        margin-top: 10px; /* Espaçamento superior */
     }
 
     nav a {
         display: block;
-        margin: 0 10px;
+        margin: 5px auto; /* Centraliza os links */
     }
 
     .container {
