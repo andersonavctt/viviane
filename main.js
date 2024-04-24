@@ -19,6 +19,12 @@ function registrarCliente(event) {
 
     if (usuarioLogado) {
         let clientesRegistrados = JSON.parse(localStorage.getItem(usuarioLogado)) || [];
+        const clienteExistente = clientesRegistrados.find(cliente => cliente.nome === nome && cliente.data === data);
+        
+        if (clienteExistente) {
+            return
+        }
+        
         clientesRegistrados.push({ nome, data, valor, procedimento });
         localStorage.setItem(usuarioLogado, JSON.stringify(clientesRegistrados));
         document.getElementById('nome').value = '';
@@ -95,8 +101,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (usuarioLogado) {
         const clientesRegistrados = JSON.parse(localStorage.getItem(usuarioLogado)) || [];
         atualizarClientesRegistrados(clientesRegistrados);
-    } else {
         carregarClientesDeCookies()
+    } else {
         logout()
     }
 });
