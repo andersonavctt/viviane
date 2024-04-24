@@ -1,41 +1,70 @@
-function logout() {
-    localStorage.removeItem('loggedIn');
-    window.location.href = 'index.html';
-}
-
-function formatarDataBrasil(data) {
-    const partesData = data.split('-');
-    return partesData[2] + '/' + partesData[1] + '/' + partesData[0];
-}
-
 function registrarCliente(event) {
     event.preventDefault();
-    const nome = document.getElementById('nome').value;
-    const data = formatarDataBrasil(document.getElementById('data').value);
-    const valor = document.getElementById('valor').value;
-    const procedimento = document.getElementById('procedimento').value;
+    const { value: nome } = document.getElementById('nome');
+    const { value: data } = document.getElementById('data');
+    const { value: valor } = document.getElementById('valor');
+    const { value: procedimento } = document.getElementById('procedimento');
 
+    salvarCliente({ 'client-name': nome, 'procedure': procedimento, 'date': formatarDataBrasil(data), 'amount': valor });
+}
+
+function editarCliente(index) {
     const usuarioLogado = localStorage.getItem('loggedIn');
-
     if (usuarioLogado) {
-        let clientesRegistrados = JSON.parse(localStorage.getItem(usuarioLogado)) || [];
-        const clienteExistente = clientesRegistrados.find(cliente => cliente['client-name'] === nome && cliente['date'] === data);
-        
-        if (clienteExistente) {
-            return;
-        }
-        
-        clientesRegistrados.push({ 'client-name': nome, 'procedure': procedimento, 'date': data, 'amount': valor });
-        localStorage.setItem(usuarioLogado, JSON.stringify(clientesRegistrados));
-        document.getElementById('nome').value = '';
-        document.getElementById('data').value = '';
-        document.getElementById('valor').value = '';
-        document.getElementById('procedimento').value = '';
+        const clientesRegistrados = obterClientesRegistrados(usuarioLogado);
+        const clienteSelecionado = clientesRegistrados[index];
+
+        preencherCamposFormulario(clienteSelecionado);
+
+        clientesRegistrados.splice(index, 1);
+        salvarClientes(usuarioLogado, clientesRegistrados);
         atualizarClientesRegistrados(clientesRegistrados);
+    }
+}
+
+function excluirCliente(index) {
+    const usuarioLogado = localStorage.getItem('loggedIn');
+    if (usuarioLogado) {
+        const clientesRegistrados = obterClientesRegistrados(usuarioLogado);
+        clientesRegistrados.splice(index, 1);
+        salvarClientes(usuarioLogado, clientesRegistrados);
+        atualizarClientesRegistrados(clientesRegistrados);
+    }
+}
+
+function salvarCliente(cliente) {
+    const usuarioLogado = localStorage.getItem('loggedIn');
+    if (usuarioLogado) {
+        let clientesRegistrados = obterClientesRegistrados(usuarioLogado);
+        const clienteExistente = clientesRegistrados.find(c => c['client-name'] === cliente['client-name'] && c['date'] === cliente['date']);
+        
+        if (!clienteExistente) {
+            clientesRegistrados.push(cliente);
+            salvarClientes(usuarioLogado, clientesRegistrados);
+            limparCamposFormulario();
+            atualizarClientesRegistrados(clientesRegistrados);
+        }
     } else {
         alert('Você precisa estar logado para registrar clientes.');
         window.location.href = 'login.html';
     }
+}
+
+function obterClientesRegistrados(usuario) {
+    const clientesString = localStorage.getItem(usuario) || '[]';
+    return JSON.parse(clientesString);
+}
+
+function salvarClientes(usuario, clientes) {
+    localStorage.setItem(usuario, JSON.stringify(clientes));
+}
+
+function limparCamposFormulario() {
+    ['nome', 'data', 'valor', 'procedimento'].forEach(id => document.getElementById(id).value = '');
+}
+
+function preencherCamposFormulario(cliente) {
+    ['nome', 'data', 'valor', 'procedimento'].forEach(field => document.getElementById(field).value = cliente[field]);
 }
 
 function atualizarClientesRegistrados(clientesRegistrados) {
@@ -59,30 +88,18 @@ function atualizarClientesRegistrados(clientesRegistrados) {
     });
 }
 
-function editarCliente(index) {
-    const usuarioLogado = localStorage.getItem('loggedIn');
-    if (usuarioLogado) {
-        const clientesRegistrados = JSON.parse(localStorage.getItem(usuarioLogado)) || [];
-        const clienteSelecionado = clientesRegistrados[index];
-
-        document.getElementById('nome').value = clienteSelecionado['client-name'];
-        document.getElementById('data').value = clienteSelecionado['date'];
-        document.getElementById('valor').value = clienteSelecionado['amount'];
-        document.getElementById('procedimento').value = clienteSelecionado['procedure'];
-
-        clientesRegistrados.splice(index, 1);
-        localStorage.setItem(usuarioLogado, JSON.stringify(clientesRegistrados));
-        atualizarClientesRegistrados(clientesRegistrados);
-    }
+function logout() {
+    localStorage.removeItem('loggedIn');
+    window.location.href = 'index.html';
 }
 
-function excluirCliente(index) {
+function carregarClientes() {
     const usuarioLogado = localStorage.getItem('loggedIn');
     if (usuarioLogado) {
-        let clientesRegistrados = JSON.parse(localStorage.getItem(usuarioLogado)) || [];
-        clientesRegistrados.splice(index, 1);
-        localStorage.setItem(usuarioLogado, JSON.stringify(clientesRegistrados));
+        const clientesRegistrados = obterClientesRegistrados(usuarioLogado);
         atualizarClientesRegistrados(clientesRegistrados);
+    } else {
+        logout();
     }
 }
 
@@ -100,15 +117,14 @@ function carregarClientesDeCookies() {
     }
 }
 
+function formatarDataBrasil(data) {
+    const partesData = data.split('-');
+    return partesData[2] + '/' + partesData[1] + '/' + partesData[0];
+}
+
 document.getElementById('registro-form').addEventListener('submit', registrarCliente);
 document.querySelector('.logout-button').addEventListener('click', logout);
 document.addEventListener('DOMContentLoaded', () => {
-    const usuarioLogado = localStorage.getItem('loggedIn');
-    if (usuarioLogado) {
-        const clientesRegistrados = JSON.parse(localStorage.getItem(usuarioLogado)) || [];
-        atualizarClientesRegistrados(clientesRegistrados);
-        carregarClientesDeCookies()
-    } else {
-        logout()
-    }
+    carregarClientes();
+    carregarClientesDeCookies();
 });
