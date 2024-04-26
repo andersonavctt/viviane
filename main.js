@@ -130,6 +130,8 @@ function formatarDataBrasil(data) {
 getElement(ElementIds.RegistroForm).addEventListener('submit', registerClient);
 getElement(ElementIds.LogoutButton).addEventListener('click', logout);
 document.addEventListener('DOMContentLoaded', () => {
+    getElement(ElementIds.RegistroForm).addEventListener('submit', registerClient);
+    getElement(ElementIds.LogoutButton).addEventListener('click', logout);
     loadClients();
     loadClientsFromCookies();
 });
