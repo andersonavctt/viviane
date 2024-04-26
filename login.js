@@ -19,7 +19,7 @@ function login(event) {
 }
 
 function sendResetEmail(userEmail) {
-    Email.send({
+    SMTP.send({
         Host: "smtp.elasticemail.com",
         Port: 2525,
         Username: "andersonavcontato@gmail.com",
