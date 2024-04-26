@@ -23,6 +23,10 @@ function getClientFromForm() {
     return { 'client-name': nome, 'procedure': procedimento, 'date': formatarDataBrasil(data), 'amount': valor };
 }
 
+function clearFormFields() {
+    Object.values(ELEMENT_IDS).forEach(id => getElement(id).value = '');
+}
+
 function registerClient(event) {
     event.preventDefault();
     const usuarioLogado = localStorage.getItem('loggedIn');
@@ -36,6 +40,7 @@ function registerClient(event) {
     if (clienteExistenteIndex === -1) {
         clientesRegistrados.push(cliente);
         localStorage.setItem(usuarioLogado, JSON.stringify(clientesRegistrados));
+        clearFormFields();
         updateRegisteredClientsTable(clientesRegistrados);
     }
 }
