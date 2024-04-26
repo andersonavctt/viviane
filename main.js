@@ -152,6 +152,6 @@ function formatarDataHTML(data) {
     return `${partesData[2]}-${partesData[1]}-${partesData[0]}`;
 }
 
-document.getElementById('clientForm').addEventListener('submit', registerClient);
+document.getElementById('registro-form').addEventListener('submit', registerClient);
 document.querySelector('.logout-button').addEventListener('click', logout);
 document.addEventListener('DOMContentLoaded', loadClients);
