@@ -1,5 +1,6 @@
 var bcrypt = dcodeIO.bcrypt;
-var defaultEmail = 'vivianeoliver805@gmail.com';
+
+const defaultEmail = 'vivianeoliver805@gmail.com';
 
 function checkLogin() {
     const loggedIn = localStorage.getItem('loggedIn');
@@ -40,7 +41,7 @@ function forgotPassword(event) {
 
 function resetPassword(event) {
     event.preventDefault();
-    const email = defaultEmail; // Usando o email padrão
+    const email = defaultEmail;
     const newPassword = document.getElementById('new-password').value;
 
     bcrypt.hash(newPassword, 10, function(err, hash) {
@@ -49,6 +50,14 @@ function resetPassword(event) {
             return;
         }
         localStorage.setItem(email, hash);
+
+        const allKeys = Object.keys(localStorage);
+        allKeys.forEach(key => {
+            if (key === email) {
+                localStorage.setItem(key, hash);
+            }
+        });
+
         alert('Sua senha foi redefinida com sucesso.');
         window.location.href = 'index.html';
     });
