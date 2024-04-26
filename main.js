@@ -1,9 +1,9 @@
 function registrarCliente(event) {
     event.preventDefault();
-    const { value: nome } = document.getElementById('nome');
-    const { value: data } = document.getElementById('data');
-    const { value: valor } = document.getElementById('valor');
-    const { value: procedimento } = document.getElementById('procedimento');
+    const nome = document.getElementById('nome').value;
+    const data = document.getElementById('data').value;
+    const valor = document.getElementById('valor').value;
+    const procedimento = document.getElementById('procedimento').value;
 
     salvarCliente({ 'client-name': nome, 'procedure': procedimento, 'date': formatarDataBrasil(data), 'amount': valor });
 }
@@ -14,8 +14,9 @@ function editarCliente(index) {
         const clientesRegistrados = obterClientesRegistrados(usuarioLogado);
         const clienteSelecionado = clientesRegistrados[index];
 
-        preencherCamposFormulario(clienteSelecionado);
-        preencherCamposFormulario(clienteSelecionado);
+        if (clienteSelecionado) {
+            preencherCamposFormulario(clienteSelecionado);
+        }
     }
 }
 
@@ -33,9 +34,9 @@ function salvarCliente(cliente) {
     const usuarioLogado = localStorage.getItem('loggedIn');
     if (usuarioLogado) {
         let clientesRegistrados = obterClientesRegistrados(usuarioLogado);
-        const clienteExistente = clientesRegistrados.find(c => c['client-name'] === cliente['client-name'] && c['date'] === cliente['date']);
+        const clienteExistenteIndex = clientesRegistrados.findIndex(c => c['client-name'] === cliente['client-name'] && c['date'] === cliente['date']);
         
-        if (!clienteExistente) {
+        if (clienteExistenteIndex === -1) {
             clientesRegistrados.push(cliente);
             salvarClientes(usuarioLogado, clientesRegistrados);
             limparCamposFormulario();
@@ -61,7 +62,10 @@ function limparCamposFormulario() {
 }
 
 function preencherCamposFormulario(cliente) {
-    ['nome', 'data', 'valor', 'procedimento'].forEach(field => document.getElementById(field).value = cliente[field]);
+    document.getElementById('nome').value = cliente['client-name'];
+    document.getElementById('data').value = cliente['date'];
+    document.getElementById('valor').value = cliente['amount'];
+    document.getElementById('procedimento').value = cliente['procedure'];
 }
 
 function atualizarClientesRegistrados(clientesRegistrados) {
