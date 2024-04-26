@@ -19,7 +19,16 @@
             </form>
             <p><a href="#" id="forgot-password">Esqueci minha senha</a></p>
         </section>
+        <section id="reset-password-form" style="display: none;">
+            <h2>Redefinir Senha</h2>
+            <form id="reset-password-form">
+                <label for="new-password">Nova Senha:</label>
+                <input type="password" id="new-password" name="new-password" required>
+                <button type="submit">Redefinir Senha</button>
+            </form>
+        </section>
     </div>
+    <script src="smtp.js"></script>
     <script src="login.js"></script>
 </body>
 </html>
