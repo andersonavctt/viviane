@@ -72,7 +72,7 @@ function updateRegisteredClientsTable(clientesRegistrados) {
 
 function fillFormFields(cliente) {
     getElement(ElementIds.Nome).value = cliente['client-name'];
-    getElement(ElementIds.Data).value = cliente['date'];
+    getElement(ElementIds.Data).value = formatarDataHTML(cliente['date']);
     getElement(ElementIds.Valor).value = cliente['amount'];
     getElement(ElementIds.Procedimento).value = cliente['procedure'];
 }
@@ -131,6 +131,11 @@ function loadClientsFromCookies() {
 function formatarDataBrasil(data) {
     const partesData = data.split('-');
     return partesData[2] + '/' + partesData[1] + '/' + partesData[0];
+}
+
+function formatarDataHTML(data) {
+    const partesData = data.split('/');
+    return partesData[2] + '-' + partesData[1] + '-' + partesData[0];
 }
 
 document.getElementById('registro-form').addEventListener('submit', registerClient);
