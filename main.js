@@ -73,6 +73,7 @@ function editClient(index) {
         const clientesRegistrados = JSON.parse(localStorage.getItem(usuarioLogado) || '[]');
         const clienteSelecionado = clientesRegistrados[index];
         if (clienteSelecionado) {
+            deleteClient(clienteSelecionado);
             fillFormFields(clienteSelecionado);
         }
     }
