@@ -15,10 +15,7 @@ function editarCliente(index) {
         const clienteSelecionado = clientesRegistrados[index];
 
         preencherCamposFormulario(clienteSelecionado);
-
-        clientesRegistrados.splice(index, 1);
-        salvarClientes(usuarioLogado, clientesRegistrados);
-        atualizarClientesRegistrados(clientesRegistrados);
+        preencherCamposFormulario(clienteSelecionado);
     }
 }
 
