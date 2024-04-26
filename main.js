@@ -15,6 +15,20 @@ function showError(message) {
     window.location.href = 'login.html';
 }
 
+function validateForm() {
+    const nome = getElement(ElementIds.Nome).value;
+    const data = getElement(ElementIds.Data).value;
+    const valor = getElement(ElementIds.Valor).value;
+    const procedimento = getElement(ElementIds.Procedimento).value;
+    
+    if (!nome || !data || !valor || !procedimento) {
+        showError('Por favor, preencha todos os campos.');
+        return false;
+    }
+    
+    return true;
+}
+
 function getClientFromForm() {
     const nome = getElement(ElementIds.Nome).value;
     const data = getElement(ElementIds.Data).value;
@@ -34,6 +48,11 @@ function registerClient(event) {
         showError('Você precisa estar logado para registrar clientes.');
         return;
     }
+
+    if (!validateForm()) {
+        return;
+    }
+    
     const cliente = getClientFromForm();
     let clientesRegistrados = JSON.parse(localStorage.getItem(usuarioLogado) || '[]');
     const clienteExistenteIndex = clientesRegistrados.findIndex(c => c['client-name'] === cliente['client-name'] && c['date'] === cliente['date']);
@@ -103,8 +122,8 @@ function loadClients() {
     const usuarioLogado = localStorage.getItem('loggedIn');
     if (usuarioLogado) {
         let clientesRegistrados = JSON.parse(localStorage.getItem(usuarioLogado) || '[]');
-        let cookieData = document.cookie.split('; ').find(row => row.startsWith('agenda_entries='));
-        
+
+        const cookieData = document.cookie.split('; ').find(row => row.startsWith('agenda_entries='));
         if (cookieData) {
             const rawClientesRegistrados = cookieData.split('=')[1];
             const clientesRegistradosFromCookies = JSON.parse(rawClientesRegistrados).map(entry => ({
@@ -133,6 +152,6 @@ function formatarDataHTML(data) {
     return `${partesData[2]}-${partesData[1]}-${partesData[0]}`;
 }
 
-document.getElementById('registro-form').addEventListener('submit', registerClient);
+document.getElementById('clientForm').addEventListener('submit', registerClient);
 document.querySelector('.logout-button').addEventListener('click', logout);
 document.addEventListener('DOMContentLoaded', loadClients);
