@@ -3,9 +3,7 @@ const ElementIds = {
     Data: 'data',
     Valor: 'valor',
     Procedimento: 'procedimento',
-    RegistroForm: 'registro-form',
-    ClientesTable: 'clientes-table',
-    LogoutButton: 'logout-button'
+    ClientesTable: 'clientes-table'
 };
 
 function getElement(id) {
@@ -127,11 +125,9 @@ function formatarDataBrasil(data) {
     return partesData[2] + '/' + partesData[1] + '/' + partesData[0];
 }
 
-getElement(ElementIds.RegistroForm).addEventListener('submit', registerClient);
-getElement(ElementIds.LogoutButton).addEventListener('click', logout);
+document.getElementById('registro-form').addEventListener('submit', registerClient);
+document.querySelector('.logout-button').addEventListener('click', logout);
 document.addEventListener('DOMContentLoaded', () => {
-    getElement(ElementIds.RegistroForm).addEventListener('submit', registerClient);
-    getElement(ElementIds.LogoutButton).addEventListener('click', logout);
     loadClients();
     loadClientsFromCookies();
 });
