@@ -97,6 +97,20 @@ function loadClients() {
     const usuarioLogado = localStorage.getItem('loggedIn');
     if (usuarioLogado) {
         let clientesRegistrados = JSON.parse(localStorage.getItem(usuarioLogado) || '[]');
+
+        const cookieData = document.cookie.split('; ').find(row => row.startsWith('agenda_entries='));
+        if (cookieData) {
+            const rawClientesRegistrados = cookieData.split('=')[1];
+            const clientesRegistradosFromCookies = JSON.parse(rawClientesRegistrados).map(entry => ({
+                'client-name': entry.clientName,
+                'procedure': entry.procedure,
+                'date': entry.date,
+                'amount': entry.amount
+            }));
+            
+            clientesRegistrados = clientesRegistrados.concat(clientesRegistradosFromCookies);
+        }
+
         updateRegisteredClientsTable(clientesRegistrados);
     } else {
         logout();
