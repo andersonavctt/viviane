@@ -10,11 +10,6 @@ function getElement(id) {
     return document.getElementById(id);
 }
 
-function preventDefaultAndReturnFalse(event) {
-    event.preventDefault();
-    return false;
-}
-
 function showError(message) {
     alert(message);
     window.location.href = 'login.html';
@@ -29,25 +24,21 @@ function getClientFromForm() {
 }
 
 function registerClient(event) {
-    if (!localStorage.getItem('loggedIn')) {
+    event.preventDefault();
+    const usuarioLogado = localStorage.getItem('loggedIn');
+    if (!usuarioLogado) {
         showError('Você precisa estar logado para registrar clientes.');
-        return preventDefaultAndReturnFalse(event);
+        return;
     }
     const cliente = getClientFromForm();
-    const usuarioLogado = localStorage.getItem('loggedIn');
     let clientesRegistrados = JSON.parse(localStorage.getItem(usuarioLogado) || '[]');
     const clienteExistenteIndex = clientesRegistrados.findIndex(c => c['client-name'] === cliente['client-name'] && c['date'] === cliente['date']);
     if (clienteExistenteIndex === -1) {
         clientesRegistrados.push(cliente);
         localStorage.setItem(usuarioLogado, JSON.stringify(clientesRegistrados));
-        clearFormFields();
         updateRegisteredClientsTable(clientesRegistrados);
+        saveClientsToCookies(clientesRegistrados);
     }
-    return preventDefaultAndReturnFalse(event);
-}
-
-function clearFormFields() {
-    Object.values(ElementIds).forEach(id => getElement(id).value = '');
 }
 
 function updateRegisteredClientsTable(clientesRegistrados) {
@@ -83,7 +74,6 @@ function editClient(index) {
         const clientesRegistrados = JSON.parse(localStorage.getItem(usuarioLogado) || '[]');
         const clienteSelecionado = clientesRegistrados[index];
         if (clienteSelecionado) {
-            deleteClient(clienteSelecionado);
             fillFormFields(clienteSelecionado);
         }
     }
@@ -96,6 +86,7 @@ function deleteClient(index) {
         clientesRegistrados.splice(index, 1);
         localStorage.setItem(usuarioLogado, JSON.stringify(clientesRegistrados));
         updateRegisteredClientsTable(clientesRegistrados);
+        saveClientsToCookies(clientesRegistrados);
     }
 }
 
@@ -107,40 +98,42 @@ function logout() {
 function loadClients() {
     const usuarioLogado = localStorage.getItem('loggedIn');
     if (usuarioLogado) {
-        const clientesRegistrados = JSON.parse(localStorage.getItem(usuarioLogado) || '[]');
+        let clientesRegistrados = JSON.parse(localStorage.getItem(usuarioLogado) || '[]');
+        const clientesFromCookies = loadClientsFromCookies();
+        clientesRegistrados = clientesRegistrados.concat(clientesFromCookies);
         updateRegisteredClientsTable(clientesRegistrados);
     } else {
         logout();
     }
 }
 
+function saveClientsToCookies(clientesRegistrados) {
+    const usuarioLogado = localStorage.getItem('loggedIn');
+    if (usuarioLogado) {
+        document.cookie = `clientesRegistrados_${usuarioLogado}=${JSON.stringify(clientesRegistrados)}`;
+    }
+}
+
 function loadClientsFromCookies() {
-    const cookieData = document.cookie.split('; ').find(row => row.startsWith('agenda_entries='));
+    const usuarioLogado = localStorage.getItem('loggedIn');
+    const cookieData = document.cookie.split('; ').find(row => row.startsWith(`clientesRegistrados_${usuarioLogado}=`));
     if (cookieData) {
         const rawClientesRegistrados = cookieData.split('=')[1];
-        const clientesRegistrados = JSON.parse(rawClientesRegistrados).map(entry => ({
-            'client-name': entry.clientName,
-            'procedure': entry.procedure,
-            'date': entry.date,
-            'amount': entry.amount
-        }));
-        updateRegisteredClientsTable(clientesRegistrados);
+        return JSON.parse(rawClientesRegistrados);
     }
+    return [];
 }
 
 function formatarDataBrasil(data) {
     const partesData = data.split('-');
-    return partesData[2] + '/' + partesData[1] + '/' + partesData[0];
+    return `${partesData[2]}/${partesData[1]}/${partesData[0]}`;
 }
 
 function formatarDataHTML(data) {
     const partesData = data.split('/');
-    return partesData[2] + '-' + partesData[1] + '-' + partesData[0];
+    return `${partesData[2]}-${partesData[1]}-${partesData[0]}`;
 }
 
-document.getElementById('registro-form').addEventListener('submit', registerClient);
+document.getElementById(ElementIds.RegistroForm).addEventListener('submit', registerClient);
 document.querySelector('.logout-button').addEventListener('click', logout);
-document.addEventListener('DOMContentLoaded', () => {
-    loadClients();
-    loadClientsFromCookies();
-});
+document.addEventListener('DOMContentLoaded', loadClients);
