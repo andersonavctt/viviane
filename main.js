@@ -70,6 +70,13 @@ function updateRegisteredClientsTable(clientesRegistrados) {
     });
 }
 
+function fillFormFields(cliente) {
+    getElement(ElementIds.Nome).value = cliente['client-name'];
+    getElement(ElementIds.Data).value = cliente['date'];
+    getElement(ElementIds.Valor).value = cliente['amount'];
+    getElement(ElementIds.Procedimento).value = cliente['procedure'];
+}
+
 function editClient(index) {
     const usuarioLogado = localStorage.getItem('loggedIn');
     if (usuarioLogado) {
