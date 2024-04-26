@@ -42,10 +42,11 @@ function forgotPassword(event) {
 function resetPassword(event) {
     event.preventDefault();
     const email = document.getElementById('email').value;
+    const checkmail = document.getElementById('checkmail').value;
     const newPassword = document.getElementById('new-password').value;
     const confirmPassword = document.getElementById('confirm-password').value;
 
-    if (email !== defaultEmail) {
+    if (checkmail !== defaultEmail) {
         alert('Você não tem permissão para redefinir a senha para este email.');
         return;
     }
