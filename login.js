@@ -41,8 +41,19 @@ function forgotPassword(event) {
 
 function resetPassword(event) {
     event.preventDefault();
-    const email = defaultEmail;
+    const email = document.getElementById('email').value;
     const newPassword = document.getElementById('new-password').value;
+    const confirmPassword = document.getElementById('confirm-password').value;
+
+    if (email !== defaultEmail) {
+        alert('Você não tem permissão para redefinir a senha para este email.');
+        return;
+    }
+
+    if (newPassword !== confirmPassword) {
+        alert('As senhas digitadas não coincidem. Por favor, tente novamente.');
+        return;
+    }
 
     bcrypt.hash(newPassword, 10, function(err, hash) {
         if (err) {
