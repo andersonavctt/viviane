@@ -118,12 +118,20 @@ function logout() {
     window.location.href = 'index.html';
 }
 
+function clearCookies() {
+    document.cookie.split(";").forEach(cookie => {
+        const eqPos = cookie.indexOf("=");
+        const name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+        document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
+    });
+}
+
 function loadClients() {
     const usuarioLogado = localStorage.getItem('loggedIn');
     if (usuarioLogado) {
         let clientesRegistrados = JSON.parse(localStorage.getItem(usuarioLogado) || '[]');
-
-        const cookieData = document.cookie.split('; ').find(row => row.startsWith('agenda_entries='));
+        let cookieData = document.cookie.split('; ').find(row => row.startsWith('agenda_entries='));
+        
         if (cookieData) {
             const rawClientesRegistrados = cookieData.split('=')[1];
             const clientesRegistradosFromCookies = JSON.parse(rawClientesRegistrados).map(entry => ({
@@ -134,6 +142,7 @@ function loadClients() {
             }));
             
             clientesRegistrados = clientesRegistrados.concat(clientesRegistradosFromCookies);
+            clearCookies()
         }
 
         updateRegisteredClientsTable(clientesRegistrados);
