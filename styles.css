@@ -122,6 +122,52 @@ form label {
     margin-bottom: 10px;
 }
 
+#forgot-password {
+    color: #007bff;
+    text-decoration: none;
+}
+
+#forgot-password:hover {
+    text-decoration: underline;
+}
+
+#reset-password-form {
+    display: none;
+}
+
+#reset-password-form h2 {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+#reset-password-form label {
+    display: block;
+    margin-bottom: 10px;
+}
+
+#reset-password-form input[type="password"] {
+    width: calc(100% - 20px);
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+#reset-password-form button {
+    width: calc(100% - 20px);
+    padding: 10px;
+    background-color: #333;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#reset-password-form button:hover {
+    background-color: #555;
+}
+
 form input[type="text"],
 form input[type="date"],
 form input[type="number"],
