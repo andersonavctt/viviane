@@ -5,7 +5,7 @@ const ElementIds = {
     Procedimento: 'procedimento',
     RegistroForm: 'registro-form',
     ClientesTable: 'clientes-table',
-    LogoutButton: '.logout-button'
+    LogoutButton: 'logout-button'
 };
 
 function getElement(id) {
