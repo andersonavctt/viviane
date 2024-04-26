@@ -37,7 +37,6 @@ function registerClient(event) {
         clientesRegistrados.push(cliente);
         localStorage.setItem(usuarioLogado, JSON.stringify(clientesRegistrados));
         updateRegisteredClientsTable(clientesRegistrados);
-        saveClientsToCookies(clientesRegistrados);
     }
 }
 
@@ -86,7 +85,6 @@ function deleteClient(index) {
         clientesRegistrados.splice(index, 1);
         localStorage.setItem(usuarioLogado, JSON.stringify(clientesRegistrados));
         updateRegisteredClientsTable(clientesRegistrados);
-        saveClientsToCookies(clientesRegistrados);
     }
 }
 
@@ -99,29 +97,10 @@ function loadClients() {
     const usuarioLogado = localStorage.getItem('loggedIn');
     if (usuarioLogado) {
         let clientesRegistrados = JSON.parse(localStorage.getItem(usuarioLogado) || '[]');
-        const clientesFromCookies = loadClientsFromCookies();
-        clientesRegistrados = clientesRegistrados.concat(clientesFromCookies);
         updateRegisteredClientsTable(clientesRegistrados);
     } else {
         logout();
     }
-}
-
-function saveClientsToCookies(clientesRegistrados) {
-    const usuarioLogado = localStorage.getItem('loggedIn');
-    if (usuarioLogado) {
-        document.cookie = `clientesRegistrados_${usuarioLogado}=${JSON.stringify(clientesRegistrados)}`;
-    }
-}
-
-function loadClientsFromCookies() {
-    const usuarioLogado = localStorage.getItem('loggedIn');
-    const cookieData = document.cookie.split('; ').find(row => row.startsWith(`clientesRegistrados_${usuarioLogado}=`));
-    if (cookieData) {
-        const rawClientesRegistrados = cookieData.split('=')[1];
-        return JSON.parse(rawClientesRegistrados);
-    }
-    return [];
 }
 
 function formatarDataBrasil(data) {
