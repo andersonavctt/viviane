@@ -1,3 +1,4 @@
+var bcrypt = dcodeIO.bcrypt;
 function checkLogin() {
     const loggedIn = localStorage.getItem('loggedIn');
     if (loggedIn) {
