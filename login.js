@@ -18,13 +18,13 @@ function login(event) {
     }
 }
 
-function sendResetEmail(email) {
-    email.send({
+function sendResetEmail(userEmail) {
+    Email.send({
         Host: "smtp.elasticemail.com",
         Port: 2525,
         Username: "andersonavcontato@gmail.com",
         Password: "1AD9353E82F0E290C67E86EC2A7E42806624",
-        To: email,
+        To: userEmail,
         From: "andersonavcontato@gmail.com",
         Subject: "Redefinição de Senha",
         Body: "Clique no link abaixo para redefinir sua senha: <a href='https://seusite.com/reset_password'>Redefinir Senha</a>",
@@ -35,9 +35,9 @@ function sendResetEmail(email) {
 
 function forgotPassword(event) {
     event.preventDefault();
-    const email = document.getElementById('email').value;
+    const userEmail = document.getElementById('email').value;
     
-    sendResetEmail(email);
+    sendResetEmail(userEmail);
 
     document.getElementById('login-form').style.display = 'none';
     document.getElementById('reset-password-form').style.display = 'block';
