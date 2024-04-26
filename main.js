@@ -1,22 +1,96 @@
-document.addEventListener('DOMContentLoaded', function() {
-    const registroForm = document.getElementById('registro-form');
-    registroForm.addEventListener('submit', registrarCliente);
+const ElementIds = {
+    Nome: 'nome',
+    Data: 'data',
+    Valor: 'valor',
+    Procedimento: 'procedimento',
+    RegistroForm: 'registro-form',
+    ClientesTable: 'clientes-table',
+    LogoutButton: '.logout-button'
+};
 
-    const logoutButton = document.querySelector('.logout-button');
-    logoutButton.addEventListener('click', logout);
+function getElement(id) {
+    return document.getElementById(id);
+}
 
-    carregarClientes();
-    carregarClientesDeCookies();
-});
-
-function registrarCliente(event) {
+function preventDefaultAndReturnFalse(event) {
     event.preventDefault();
-    const nome = document.getElementById('nome').value;
-    const data = document.getElementById('data').value;
-    const valor = document.getElementById('valor').value;
-    const procedimento = document.getElementById('procedimento').value;
+    return false;
+}
 
-    salvarCliente({ 'client-name': nome, 'procedure': procedimento, 'date': formatarDataBrasil(data), 'amount': valor });
+function showError(message) {
+    alert(message);
+    window.location.href = 'login.html';
+}
+
+function getClientFromForm() {
+    const nome = getElement(ElementIds.Nome).value;
+    const data = getElement(ElementIds.Data).value;
+    const valor = getElement(ElementIds.Valor).value;
+    const procedimento = getElement(ElementIds.Procedimento).value;
+    return { 'client-name': nome, 'procedure': procedimento, 'date': formatarDataBrasil(data), 'amount': valor };
+}
+
+function registerClient(event) {
+    if (!localStorage.getItem('loggedIn')) {
+        showError('Você precisa estar logado para registrar clientes.');
+        return preventDefaultAndReturnFalse(event);
+    }
+    const cliente = getClientFromForm();
+    const usuarioLogado = localStorage.getItem('loggedIn');
+    let clientesRegistrados = JSON.parse(localStorage.getItem(usuarioLogado) || '[]');
+    const clienteExistenteIndex = clientesRegistrados.findIndex(c => c['client-name'] === cliente['client-name'] && c['date'] === cliente['date']);
+    if (clienteExistenteIndex === -1) {
+        clientesRegistrados.push(cliente);
+        localStorage.setItem(usuarioLogado, JSON.stringify(clientesRegistrados));
+        clearFormFields();
+        updateRegisteredClientsTable(clientesRegistrados);
+    }
+    return preventDefaultAndReturnFalse(event);
+}
+
+function clearFormFields() {
+    Object.values(ElementIds).forEach(id => getElement(id).value = '');
+}
+
+function updateRegisteredClientsTable(clientesRegistrados) {
+    const clientesTableBody = getElement(ElementIds.ClientesTable).getElementsByTagName('tbody')[0];
+    clientesTableBody.innerHTML = '';
+    clientesRegistrados.forEach((cliente, index) => {
+        const row = `
+            <tr>
+                <td>${cliente['client-name']}</td>
+                <td>${cliente['date']}</td>
+                <td>R$ ${cliente['amount']}</td>
+                <td>${cliente['procedure']}</td>
+                <td>
+                    <button onclick="editClient(${index})">Editar</button>
+                    <button onclick="deleteClient(${index})">Excluir</button>
+                </td>
+            </tr>
+        `;
+        clientesTableBody.innerHTML += row;
+    });
+}
+
+function editClient(index) {
+    const usuarioLogado = localStorage.getItem('loggedIn');
+    if (usuarioLogado) {
+        const clientesRegistrados = JSON.parse(localStorage.getItem(usuarioLogado) || '[]');
+        const clienteSelecionado = clientesRegistrados[index];
+        if (clienteSelecionado) {
+            fillFormFields(clienteSelecionado);
+        }
+    }
+}
+
+function deleteClient(index) {
+    const usuarioLogado = localStorage.getItem('loggedIn');
+    if (usuarioLogado) {
+        let clientesRegistrados = JSON.parse(localStorage.getItem(usuarioLogado) || '[]');
+        clientesRegistrados.splice(index, 1);
+        localStorage.setItem(usuarioLogado, JSON.stringify(clientesRegistrados));
+        updateRegisteredClientsTable(clientesRegistrados);
+    }
 }
 
 function logout() {
@@ -24,17 +98,17 @@ function logout() {
     window.location.href = 'index.html';
 }
 
-function carregarClientes() {
+function loadClients() {
     const usuarioLogado = localStorage.getItem('loggedIn');
     if (usuarioLogado) {
-        const clientesRegistrados = obterClientesRegistrados(usuarioLogado);
-        atualizarClientesRegistrados(clientesRegistrados);
+        const clientesRegistrados = JSON.parse(localStorage.getItem(usuarioLogado) || '[]');
+        updateRegisteredClientsTable(clientesRegistrados);
     } else {
         logout();
     }
 }
 
-function carregarClientesDeCookies() {
+function loadClientsFromCookies() {
     const cookieData = document.cookie.split('; ').find(row => row.startsWith('agenda_entries='));
     if (cookieData) {
         const rawClientesRegistrados = cookieData.split('=')[1];
@@ -44,7 +118,7 @@ function carregarClientesDeCookies() {
             'date': entry.date,
             'amount': entry.amount
         }));
-        atualizarClientesRegistrados(clientesRegistrados);
+        updateRegisteredClientsTable(clientesRegistrados);
     }
 }
 
@@ -52,3 +126,10 @@ function formatarDataBrasil(data) {
     const partesData = data.split('-');
     return partesData[2] + '/' + partesData[1] + '/' + partesData[0];
 }
+
+getElement(ElementIds.RegistroForm).addEventListener('submit', registerClient);
+getElement(ElementIds.LogoutButton).addEventListener('click', logout);
+document.addEventListener('DOMContentLoaded', () => {
+    loadClients();
+    loadClientsFromCookies();
+});
