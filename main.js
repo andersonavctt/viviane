@@ -24,7 +24,7 @@ function getClientFromForm() {
 }
 
 function clearFormFields() {
-    Object.values(ELEMENT_IDS).forEach(id => getElement(id).value = '');
+    Object.values(ElementIds).forEach(id => getElement(id).value = '');
 }
 
 function registerClient(event) {
